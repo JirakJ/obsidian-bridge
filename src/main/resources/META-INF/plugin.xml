@@ -2,12 +2,21 @@
   <id>dev.htmeta.obsidian-bridge</id>
   <name>Obsidian Bridge</name>
   <description>Obsidian Bridge for JetBrains — integrates Obsidian vaults.</description>
-  <version>0.1.0</version>
+  <version>2026.2.0</version>
   <vendor email="support@htmeta.dev" url="https://htmeta.dev">HTMETA.dev</vendor>
+  <icon>/icons/obsidian.svg</icon>
   <idea-version since-build="232"/>
   <depends>com.intellij.modules.platform</depends>
   <extensions defaultExtensionNs="com.intellij">
   </extensions>
   <actions>
   </actions>
+  <change-notes><![CDATA[
+    <h3>What's New in 2026.2.0</h3>
+    <ul>
+      <li>Initial production-ready freemium release: core vault indexing and wiki-link navigation (free).</li>
+      <li>Premium features: JCEF graph export, advanced sync, workspace linking.</li>
+      <li>All icons are vector SVGs; full test coverage and CI plugin verifier configured.</li>
+    </ul>
+  ]]></change-notes>
 </idea-plugin>

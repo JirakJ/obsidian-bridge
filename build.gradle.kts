@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.htmeta"
-version = "0.1.0"
+version = providers.gradleProperty("pluginVersion").get()
 
 repositories {
     mavenCentral()
