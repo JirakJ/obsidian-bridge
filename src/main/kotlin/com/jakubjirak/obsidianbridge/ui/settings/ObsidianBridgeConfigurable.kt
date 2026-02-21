@@ -16,7 +16,7 @@ class ObsidianBridgeConfigurable : Configurable {
     private var showGutterCheckbox: JCheckBox? = null
     private var modified = false
 
-    override fun getDisplayName(): String = "Obsidian Bridge"
+    override fun getDisplayName(): String = "Obsidian IDE Bridge"
 
     override fun createComponent(): JComponent {
         val mainPanel = JPanel(BorderLayout())

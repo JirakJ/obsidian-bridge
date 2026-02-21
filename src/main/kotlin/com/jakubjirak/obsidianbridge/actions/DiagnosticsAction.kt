@@ -19,7 +19,7 @@ class DiagnosticsAction : AnAction() {
         val totalLinks = notes.sumOf { it.outgoingLinks.size }
 
         val sb = StringBuilder()
-        sb.appendLine("Obsidian Bridge Diagnostics")
+        sb.appendLine("Obsidian IDE Bridge Diagnostics")
         sb.appendLine("─".repeat(40))
         sb.appendLine("License Tier: ${licenseService.getCurrentTier()}")
         sb.appendLine("Active Vaults: ${vaults.size}")
@@ -33,6 +33,6 @@ class DiagnosticsAction : AnAction() {
         sb.appendLine("Total Wiki-Links: $totalLinks")
         sb.appendLine("Plugin Version: 2026.2.1")
 
-        Messages.showInfoMessage(project, sb.toString(), "Obsidian Bridge — Diagnostics")
+        Messages.showInfoMessage(project, sb.toString(), "Obsidian IDE Bridge — Diagnostics")
     }
 }

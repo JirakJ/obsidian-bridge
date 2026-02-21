@@ -20,7 +20,7 @@ class ReindexAction : AnAction() {
         val vaults = vaultManager.getActiveVaults()
 
         if (vaults.isEmpty()) {
-            ObsidianBridgeNotifications.notifyWarning(project, "No vaults configured. Go to Settings → Tools → Obsidian Bridge.")
+            ObsidianBridgeNotifications.notifyWarning(project, "No vaults configured. Go to Settings → Tools → Obsidian IDE Bridge.")
             return
         }
 

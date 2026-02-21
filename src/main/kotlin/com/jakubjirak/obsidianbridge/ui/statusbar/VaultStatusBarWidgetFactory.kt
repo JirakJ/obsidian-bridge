@@ -9,7 +9,7 @@ import com.jakubjirak.obsidianbridge.core.VaultManager
 
 class VaultStatusBarWidgetFactory : StatusBarWidgetFactory {
     override fun getId(): String = "ObsidianBridge.StatusBar"
-    override fun getDisplayName(): String = "Obsidian Bridge"
+    override fun getDisplayName(): String = "Obsidian IDE Bridge"
     override fun isAvailable(project: Project): Boolean = true
 
     override fun createWidget(project: Project): StatusBarWidget = VaultStatusBarWidget(project)
@@ -33,7 +33,7 @@ class VaultStatusBarWidget(private val project: Project) : StatusBarWidget, Stat
         return "Obsidian: ${vaults.size} vault(s), $noteCount notes"
     }
 
-    override fun getTooltipText(): String = "Obsidian Bridge vault status"
+    override fun getTooltipText(): String = "Obsidian IDE Bridge vault status"
 
     override fun getAlignment(): Float = 0.5f
 

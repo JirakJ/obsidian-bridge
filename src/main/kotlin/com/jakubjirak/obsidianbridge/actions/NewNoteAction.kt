@@ -20,13 +20,13 @@ class NewNoteAction : AnAction() {
 
         val licenseService = LicenseService.getInstance()
         if (!licenseService.isFeatureAvailable(Feature.TEMPLATES)) {
-            Messages.showInfoMessage(project, "Templates is a Pro feature. Upgrade to Pro to unlock.", "Obsidian Bridge — Pro Feature")
+            Messages.showInfoMessage(project, "Templates is a Pro feature. Upgrade to Pro to unlock.", "Obsidian IDE Bridge — Pro Feature")
             return
         }
 
         val vaults = VaultManager.getInstance(project).getActiveVaults()
         if (vaults.isEmpty()) {
-            Messages.showWarningDialog(project, "No vaults configured.", "Obsidian Bridge")
+            Messages.showWarningDialog(project, "No vaults configured.", "Obsidian IDE Bridge")
             return
         }
 
@@ -39,16 +39,16 @@ class NewNoteAction : AnAction() {
 
         runCatching {
             if (Files.exists(notePath)) {
-                Messages.showWarningDialog(project, "Note already exists: $notePath", "Obsidian Bridge")
+                Messages.showWarningDialog(project, "Note already exists: $notePath", "Obsidian IDE Bridge")
                 return
             }
             val dateStr = LocalDate.now().toString()
             Files.writeString(notePath, "---\ntitle: $title\ndate: $dateStr\ntags: []\n---\n\n# $title\n\n")
             log.info("Created note: $notePath")
-            Messages.showInfoMessage(project, "Note created: $notePath", "Obsidian Bridge")
+            Messages.showInfoMessage(project, "Note created: $notePath", "Obsidian IDE Bridge")
         }.onFailure { ex ->
             log.warn("Failed to create note: ${ex.message}")
-            Messages.showErrorDialog(project, "Failed to create note: ${ex.message}", "Obsidian Bridge")
+            Messages.showErrorDialog(project, "Failed to create note: ${ex.message}", "Obsidian IDE Bridge")
         }
     }
 }

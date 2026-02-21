@@ -5,7 +5,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 
 object ObsidianBridgeNotifications {
-    private const val GROUP_ID = "Obsidian Bridge"
+    private const val GROUP_ID = "Obsidian IDE Bridge"
 
     fun notifyInfo(project: Project, content: String) {
         NotificationGroupManager.getInstance()
