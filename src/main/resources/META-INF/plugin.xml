@@ -1,7 +1,7 @@
 <idea-plugin>
-    <id>dev.htmeta.obsidianbridge</id>
+    <id>com.jakubjirak.obsidianbridge</id>
     <name>Obsidian Bridge</name>
-    <vendor email="jakub@htmeta.dev" url="https://htmeta.dev">HTMETA</vendor>
+    <vendor email="jakub@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirák</vendor>
 
     <description><![CDATA[
     <h2>Obsidian Bridge for JetBrains</h2>
@@ -32,6 +32,20 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <h3>What's New in 2026.2.1</h3>
+    <ul>
+      <li><b>Startup Indexing</b> — Vaults are automatically indexed on project open.</li>
+      <li><b>Status Bar Widget</b> — See vault and note count at a glance.</li>
+      <li><b>Wiki-Link Line Markers</b> — Gutter icons for wiki-link detection.</li>
+      <li><b>Wiki-Link Completion</b> — Autocomplete note titles inside <code>[[...]]</code>.</li>
+      <li><b>License Service</b> — Freemium feature gating (Free / Pro / Team).</li>
+      <li><b>Index Persistence</b> — Cached note hashes for faster incremental re-indexing.</li>
+      <li><b>Vault Diagnostics</b> — New action to inspect vault health and statistics.</li>
+      <li><b>Notification Support</b> — Balloon notifications for indexing and warnings.</li>
+      <li><b>Progress Indicator</b> — Re-index action now shows background progress.</li>
+      <li><b>Package Rename</b> — Migrated from dev.htmeta to com.jakubjirak namespace.</li>
+    </ul>
+
     <h3>What's New in 2026.2.0</h3>
     <ul>
       <li><b>Initial Release</b> — Production-ready freemium plugin.</li>
@@ -55,37 +69,61 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Application-level settings service -->
         <applicationService
-            serviceImplementation="dev.htmeta.obsidianbridge.ui.settings.ObsidianBridgeSettings"/>
+            serviceImplementation="com.jakubjirak.obsidianbridge.ui.settings.ObsidianBridgeSettings"/>
+
+        <!-- Application-level license service -->
+        <applicationService
+            serviceImplementation="com.jakubjirak.obsidianbridge.license.LicenseService"/>
 
         <!-- Project-level services -->
         <projectService
-            serviceImplementation="dev.htmeta.obsidianbridge.core.VaultManager"/>
+            serviceImplementation="com.jakubjirak.obsidianbridge.core.VaultManager"/>
         <projectService
-            serviceImplementation="dev.htmeta.obsidianbridge.core.IndexService"/>
+            serviceImplementation="com.jakubjirak.obsidianbridge.core.IndexService"/>
         <projectService
-            serviceImplementation="dev.htmeta.obsidianbridge.search.VaultSearchService"/>
+            serviceImplementation="com.jakubjirak.obsidianbridge.search.VaultSearchService"/>
         <projectService
-            serviceImplementation="dev.htmeta.obsidianbridge.bridge.BridgeService"/>
+            serviceImplementation="com.jakubjirak.obsidianbridge.bridge.BridgeService"/>
+        <projectService
+            serviceImplementation="com.jakubjirak.obsidianbridge.core.IndexPersistence"/>
 
         <!-- Tool windows -->
         <toolWindow id="Backlinks" anchor="right" secondary="true"
-            factoryClass="dev.htmeta.obsidianbridge.ui.toolwindow.BacklinksToolWindowFactory"
+            factoryClass="com.jakubjirak.obsidianbridge.ui.toolwindow.BacklinksToolWindowFactory"
             icon="/icons/backlinks.svg"/>
         <toolWindow id="Tags" anchor="left" secondary="true"
-            factoryClass="dev.htmeta.obsidianbridge.ui.toolwindow.TagTreeToolWindowFactory"
+            factoryClass="com.jakubjirak.obsidianbridge.ui.toolwindow.TagTreeToolWindowFactory"
             icon="/icons/tags.svg"/>
         <toolWindow id="Graph" anchor="bottom"
-            factoryClass="dev.htmeta.obsidianbridge.ui.toolwindow.GraphToolWindowFactory"
+            factoryClass="com.jakubjirak.obsidianbridge.ui.toolwindow.GraphToolWindowFactory"
             icon="/icons/graph.svg"/>
 
         <!-- Settings panel -->
         <applicationConfigurable
-            instance="dev.htmeta.obsidianbridge.ui.settings.ObsidianBridgeConfigurable"
+            instance="com.jakubjirak.obsidianbridge.ui.settings.ObsidianBridgeConfigurable"
             id="obsidian.bridge.settings" displayName="Obsidian Bridge" parentId="tools"/>
 
         <!-- VFS listener for vault file watching -->
         <vfs.asyncListener
-            implementation="dev.htmeta.obsidianbridge.core.VaultFileListener"/>
+            implementation="com.jakubjirak.obsidianbridge.core.VaultFileListener"/>
+
+        <!-- Notification group -->
+        <notificationGroup id="Obsidian Bridge" displayType="BALLOON"/>
+
+        <!-- Startup activity -->
+        <postStartupActivity implementation="com.jakubjirak.obsidianbridge.startup.ObsidianBridgeStartupActivity"/>
+
+        <!-- Status bar widget -->
+        <statusBarWidgetFactory id="ObsidianBridge.StatusBar"
+            implementation="com.jakubjirak.obsidianbridge.ui.statusbar.VaultStatusBarWidgetFactory"/>
+
+        <!-- Line marker provider -->
+        <codeInsight.lineMarkerProvider language=""
+            implementationClass="com.jakubjirak.obsidianbridge.editor.WikiLinkLineMarkerProvider"/>
+
+        <!-- Completion contributor -->
+        <completion.contributor language="any"
+            implementationClass="com.jakubjirak.obsidianbridge.editor.WikiLinkCompletionContributor"/>
     </extensions>
 
     <!-- Actions -->
@@ -93,39 +131,42 @@
         <group id="ObsidianBridge.MainMenu" text="Obsidian Bridge" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <action id="obsidian.bridge.search"
-                class="dev.htmeta.obsidianbridge.actions.SearchAction"
+                class="com.jakubjirak.obsidianbridge.actions.SearchAction"
                 text="Search Vault" description="Search across all registered Obsidian vaults"
                 icon="/icons/search.svg">
                 <keyboard-shortcut first-keystroke="ctrl alt O" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="meta alt O" keymap="Mac OS X 10.5+"/>
             </action>
             <action id="obsidian.bridge.dailyNote"
-                class="dev.htmeta.obsidianbridge.actions.DailyNoteAction"
+                class="com.jakubjirak.obsidianbridge.actions.DailyNoteAction"
                 text="Open Daily Note" description="Open or create today's daily note"
                 icon="/icons/daily.svg">
                 <keyboard-shortcut first-keystroke="ctrl alt D" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="meta alt D" keymap="Mac OS X 10.5+"/>
             </action>
             <action id="obsidian.bridge.newNote"
-                class="dev.htmeta.obsidianbridge.actions.NewNoteAction"
+                class="com.jakubjirak.obsidianbridge.actions.NewNoteAction"
                 text="New Note" description="Create a new Obsidian note from template"
                 icon="/icons/new-note.svg">
                 <keyboard-shortcut first-keystroke="ctrl alt N" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="meta alt N" keymap="Mac OS X 10.5+"/>
             </action>
             <action id="obsidian.bridge.reindex"
-                class="dev.htmeta.obsidianbridge.actions.ReindexAction"
+                class="com.jakubjirak.obsidianbridge.actions.ReindexAction"
                 text="Re-index Vault" description="Force re-index all registered vaults"/>
+            <action id="obsidian.bridge.diagnostics"
+                class="com.jakubjirak.obsidianbridge.actions.DiagnosticsAction"
+                text="Vault Diagnostics" description="Show vault health and statistics"/>
         </group>
     </actions>
 
     <!-- Extension points for third-party plugins -->
     <extensionPoints>
         <extensionPoint name="linkResolver"
-            interface="dev.htmeta.obsidianbridge.extensions.ObsidianLinkResolver"/>
+            interface="com.jakubjirak.obsidianbridge.extensions.ObsidianLinkResolver"/>
         <extensionPoint name="frontmatterProcessor"
-            interface="dev.htmeta.obsidianbridge.extensions.FrontmatterProcessor"/>
+            interface="com.jakubjirak.obsidianbridge.extensions.FrontmatterProcessor"/>
         <extensionPoint name="bridgeMarkerProvider"
-            interface="dev.htmeta.obsidianbridge.extensions.BridgeMarkerProvider"/>
+            interface="com.jakubjirak.obsidianbridge.extensions.BridgeMarkerProvider"/>
     </extensionPoints>
 </idea-plugin>
