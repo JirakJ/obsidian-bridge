@@ -4,6 +4,8 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jakubjirak.obsidianbridge.core.model.BridgeEntry
+import com.jakubjirak.obsidianbridge.license.Feature
+import com.jakubjirak.obsidianbridge.license.LicenseService
 
 @Service(Service.Level.PROJECT)
 class BridgeService(private val project: Project) {
@@ -18,6 +20,12 @@ class BridgeService(private val project: Project) {
     )
 
     fun scanFile(filePath: String, content: String): List<BridgeEntry> {
+        val licenseService = LicenseService.getInstance()
+        if (!licenseService.isFeatureAvailable(Feature.BRIDGE_MARKERS)) {
+            log.info("Bridge markers is a Pro feature — skipping scan")
+            return emptyList()
+        }
+
         val found = mutableListOf<BridgeEntry>()
         content.lines().forEachIndexed { index, line ->
             for (pattern in markerPatterns) {

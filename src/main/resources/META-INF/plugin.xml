@@ -32,6 +32,13 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <h3>What's New in 2026.2.2</h3>
+    <ul>
+      <li><b>Comprehensive Tests</b> — Added 40+ unit tests covering license, search, indexing, models, and utilities.</li>
+      <li><b>Freemium Enforcement</b> — Pro features (Graph, Tags, Daily Notes, Templates, Bridge) now require Pro license.</li>
+      <li><b>Pro Feature Panels</b> — Locked features show clear upgrade messaging.</li>
+    </ul>
+
     <h3>What's New in 2026.2.1</h3>
     <ul>
       <li><b>Startup Indexing</b> — Vaults are automatically indexed on project open.</li>
