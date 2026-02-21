@@ -1,0 +1,13 @@
+<idea-plugin>
+  <id>dev.htmeta.obsidian-bridge</id>
+  <name>Obsidian Bridge</name>
+  <description>Obsidian Bridge for JetBrains — integrates Obsidian vaults.</description>
+  <version>0.1.0</version>
+  <vendor email="support@htmeta.dev" url="https://htmeta.dev">HTMETA.dev</vendor>
+  <idea-version since-build="232"/>
+  <depends>com.intellij.modules.platform</depends>
+  <extensions defaultExtensionNs="com.intellij">
+  </extensions>
+  <actions>
+  </actions>
+</idea-plugin>
