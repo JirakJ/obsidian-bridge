@@ -1,26 +1,71 @@
 plugins {
-    kotlin("jvm") version "1.9.10"
-    id("org.jetbrains.intellij") version "1.16.0"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.intellij.platform)
 }
 
-group = "dev.htmeta"
+group = providers.gradleProperty("pluginGroup").get()
 version = providers.gradleProperty("pluginVersion").get()
+
+kotlin {
+    jvmToolchain(providers.gradleProperty("javaVersion").get().toInt())
+}
 
 repositories {
     mavenCentral()
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+    intellijPlatform {
+        create(
+            providers.gradleProperty("platformType"),
+            providers.gradleProperty("platformVersion"),
+        )
+        instrumentationTools()
+        pluginVerifier()
+        zipSigner()
+    }
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly(libs.junit.engine)
 }
 
-intellij {
-    version.set("2023.3")
-    type.set("IC")
-    plugins.set(listOf())
+intellijPlatform {
+    pluginConfiguration {
+        id = providers.gradleProperty("pluginGroup")
+        name = providers.gradleProperty("pluginName")
+        version = providers.gradleProperty("pluginVersion")
+
+        ideaVersion {
+            sinceBuild = providers.gradleProperty("pluginSinceBuild")
+        }
+
+        vendor {
+            name = "Jakub Jirák"
+            url = "https://github.com/jakubjirak"
+        }
+    }
+
+    pluginVerification {
+        ides {
+            recommended()
+        }
+    }
+
+    signing { }
+    publishing {
+        token.set(System.getenv("PUBLISH_TOKEN"))
+    }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+
+    wrapper {
+        gradleVersion = "8.12"
+    }
 }
