@@ -21,13 +21,13 @@ class DailyNoteAction : AnAction() {
 
         val licenseService = LicenseService.getInstance()
         if (!licenseService.isFeatureAvailable(Feature.DAILY_NOTES)) {
-            Messages.showInfoMessage(project, "Daily Notes is a Pro feature. Upgrade to Pro to unlock.", "Obsidian Bridge — Pro Feature")
+            Messages.showInfoMessage(project, "Daily Notes is a Pro feature. Upgrade to Pro to unlock.", "Obsidian IDE Bridge — Pro Feature")
             return
         }
 
         val vaults = VaultManager.getInstance(project).getActiveVaults()
         if (vaults.isEmpty()) {
-            Messages.showWarningDialog(project, "No vaults configured. Go to Settings → Tools → Obsidian Bridge.", "Obsidian Bridge")
+            Messages.showWarningDialog(project, "No vaults configured. Go to Settings → Tools → Obsidian IDE Bridge.", "Obsidian IDE Bridge")
             return
         }
 
@@ -43,10 +43,10 @@ class DailyNoteAction : AnAction() {
                 log.info("Created daily note: $notePath")
             }
             // File open handled by IDE VFS refresh
-            Messages.showInfoMessage(project, "Daily note: $notePath", "Obsidian Bridge")
+            Messages.showInfoMessage(project, "Daily note: $notePath", "Obsidian IDE Bridge")
         }.onFailure { ex ->
             log.warn("Failed to create daily note: ${ex.message}")
-            Messages.showErrorDialog(project, "Failed to create daily note: ${ex.message}", "Obsidian Bridge")
+            Messages.showErrorDialog(project, "Failed to create daily note: ${ex.message}", "Obsidian IDE Bridge")
         }
     }
 }

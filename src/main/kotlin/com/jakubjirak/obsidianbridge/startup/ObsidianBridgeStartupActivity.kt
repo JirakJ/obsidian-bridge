@@ -17,13 +17,13 @@ class ObsidianBridgeStartupActivity : ProjectActivity {
             log.info("No active vaults configured — skipping startup indexing")
             return
         }
-        log.info("Obsidian Bridge: starting index for ${vaults.size} vault(s)")
+        log.info("Obsidian IDE Bridge: starting index for ${vaults.size} vault(s)")
         val indexService = IndexService.getInstance(project)
         for (vault in vaults) {
             indexService.indexVault(vault)
         }
         val count = indexService.getAllNotes().size
-        log.info("Obsidian Bridge: indexed $count notes on startup")
+        log.info("Obsidian IDE Bridge: indexed $count notes on startup")
         ObsidianBridgeNotifications.notifyInfo(
             project,
             "Indexed $count notes across ${vaults.size} vault(s)"

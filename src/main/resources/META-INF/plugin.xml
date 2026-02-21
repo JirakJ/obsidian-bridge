@@ -1,10 +1,10 @@
 <idea-plugin>
     <id>com.jakubjirak.obsidianbridge</id>
-    <name>Obsidian Bridge</name>
+    <name>Obsidian IDE Bridge</name>
     <vendor email="jakub@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirák</vendor>
 
     <description><![CDATA[
-    <h2>Obsidian Bridge for JetBrains</h2>
+    <h2>Obsidian IDE Bridge for JetBrains</h2>
     <p>Integrate your Obsidian vault directly into JetBrains IDEs. Navigate <code>[[wiki-links]]</code>,
     view backlinks, parse YAML frontmatter, search vault metadata, and bridge TODO/FIXME comments
     with Obsidian notes — all without leaving the IDE.</p>
@@ -32,6 +32,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <h3>What's New in 2026.2.3</h3>
+    <ul>
+      <li><b>Renamed</b> — Plugin renamed to Obsidian IDE Bridge to avoid Marketplace naming conflicts.</li>
+    </ul>
+
     <h3>What's New in 2026.2.2</h3>
     <ul>
       <li><b>Comprehensive Tests</b> — Added 40+ unit tests covering license, search, indexing, models, and utilities.</li>
@@ -66,7 +71,7 @@
       <li>Interactive graph visualization via JCEF/D3.js (Pro).</li>
       <li>Daily notes quick action (Pro).</li>
       <li>Template engine with variable substitution (Pro).</li>
-      <li>Settings panel under Tools → Obsidian Bridge.</li>
+      <li>Settings panel under Tools → Obsidian IDE Bridge.</li>
       <li>All vector SVG icons; no until-build cap for future compatibility.</li>
     </ul>
     ]]></change-notes>
@@ -108,14 +113,14 @@
         <!-- Settings panel -->
         <applicationConfigurable
             instance="com.jakubjirak.obsidianbridge.ui.settings.ObsidianBridgeConfigurable"
-            id="obsidian.bridge.settings" displayName="Obsidian Bridge" parentId="tools"/>
+            id="obsidian.bridge.settings" displayName="Obsidian IDE Bridge" parentId="tools"/>
 
         <!-- VFS listener for vault file watching -->
         <vfs.asyncListener
             implementation="com.jakubjirak.obsidianbridge.core.VaultFileListener"/>
 
         <!-- Notification group -->
-        <notificationGroup id="Obsidian Bridge" displayType="BALLOON"/>
+        <notificationGroup id="Obsidian IDE Bridge" displayType="BALLOON"/>
 
         <!-- Startup activity -->
         <postStartupActivity implementation="com.jakubjirak.obsidianbridge.startup.ObsidianBridgeStartupActivity"/>
@@ -135,7 +140,7 @@
 
     <!-- Actions -->
     <actions>
-        <group id="ObsidianBridge.MainMenu" text="Obsidian Bridge" popup="true">
+        <group id="ObsidianBridge.MainMenu" text="Obsidian IDE Bridge" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <action id="obsidian.bridge.search"
                 class="com.jakubjirak.obsidianbridge.actions.SearchAction"
