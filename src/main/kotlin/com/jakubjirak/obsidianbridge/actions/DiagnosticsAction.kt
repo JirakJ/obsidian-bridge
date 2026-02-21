@@ -31,7 +31,7 @@ class DiagnosticsAction : AnAction() {
         sb.appendLine("Total Notes: ${notes.size}")
         sb.appendLine("Unique Tags: $totalTags")
         sb.appendLine("Total Wiki-Links: $totalLinks")
-        sb.appendLine("Plugin Version: 2026.2.1")
+        sb.appendLine("Plugin Version: 2026.2.4")
 
         Messages.showInfoMessage(project, sb.toString(), "Obsidian IDE Bridge — Diagnostics")
     }

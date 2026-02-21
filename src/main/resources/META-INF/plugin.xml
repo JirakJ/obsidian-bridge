@@ -1,7 +1,9 @@
 <idea-plugin>
     <id>com.jakubjirak.obsidianbridge</id>
     <name>Obsidian IDE Bridge</name>
-    <vendor email="jakub@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirák</vendor>
+    <vendor email="support@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirák</vendor>
+
+    <product-descriptor code="POBSIDIANIDEBRI" release-date="20260221" release-version="20262" optional="true"/>
 
     <description><![CDATA[
     <h2>Obsidian IDE Bridge for JetBrains</h2>
@@ -32,6 +34,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <h3>What's New in 2026.2.4</h3>
+    <ul>
+      <li><b>Marketplace Ready</b> — Added product descriptor (POBSIDIANIDEBRI), freemium pricing model, support contact.</li>
+    </ul>
+
     <h3>What's New in 2026.2.3</h3>
     <ul>
       <li><b>Renamed</b> — Plugin renamed to Obsidian IDE Bridge to avoid Marketplace naming conflicts.</li>
