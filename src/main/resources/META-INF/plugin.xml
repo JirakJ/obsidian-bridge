@@ -1,22 +1,131 @@
 <idea-plugin>
-  <id>dev.htmeta.obsidian-bridge</id>
-  <name>Obsidian Bridge</name>
-  <description>Obsidian Bridge for JetBrains — integrates Obsidian vaults.</description>
-  <version>2026.2.0</version>
-  <vendor email="support@htmeta.dev" url="https://htmeta.dev">HTMETA.dev</vendor>
-  <icon>/icons/obsidian.svg</icon>
-  <idea-version since-build="232"/>
-  <depends>com.intellij.modules.platform</depends>
-  <extensions defaultExtensionNs="com.intellij">
-  </extensions>
-  <actions>
-  </actions>
-  <change-notes><![CDATA[
+    <id>dev.htmeta.obsidianbridge</id>
+    <name>Obsidian Bridge</name>
+    <vendor email="jakub@htmeta.dev" url="https://htmeta.dev">HTMETA</vendor>
+
+    <description><![CDATA[
+    <h2>Obsidian Bridge for JetBrains</h2>
+    <p>Integrate your Obsidian vault directly into JetBrains IDEs. Navigate <code>[[wiki-links]]</code>,
+    view backlinks, parse YAML frontmatter, search vault metadata, and bridge TODO/FIXME comments
+    with Obsidian notes — all without leaving the IDE.</p>
+
+    <h3>Free Features</h3>
+    <ul>
+      <li>Wiki-link navigation and autocompletion</li>
+      <li>Basic backlinks panel</li>
+      <li>Single vault support</li>
+      <li>Vault-wide full-text search</li>
+      <li>Frontmatter parsing and display</li>
+    </ul>
+
+    <h3>Pro Features</h3>
+    <ul>
+      <li>Interactive graph view (D3.js)</li>
+      <li>Code ↔ Notes bridging (TODO/FIXME linking)</li>
+      <li>Tag tree navigation</li>
+      <li>Daily notes integration</li>
+      <li>Templates with variable substitution</li>
+      <li>Multi-vault support</li>
+    </ul>
+
+    <p>Works with IntelliJ IDEA, WebStorm, PyCharm, CLion, GoLand, PhpStorm, Rider, RubyMine, and Android Studio.</p>
+    ]]></description>
+
+    <change-notes><![CDATA[
     <h3>What's New in 2026.2.0</h3>
     <ul>
-      <li>Initial production-ready freemium release: core vault indexing and wiki-link navigation (free).</li>
-      <li>Premium features: JCEF graph export, advanced sync, workspace linking.</li>
-      <li>All icons are vector SVGs; full test coverage and CI plugin verifier configured.</li>
+      <li><b>Initial Release</b> — Production-ready freemium plugin.</li>
+      <li>Vault registration and validation with persistent settings.</li>
+      <li>Fast incremental indexing via VFS file watchers.</li>
+      <li>Wiki-link recognition, navigation, and autocompletion.</li>
+      <li>Backlinks tool window with context preview.</li>
+      <li>Tag tree panel with hierarchical navigation.</li>
+      <li>Vault-wide full-text search with filter chips.</li>
+      <li>Code ↔ Notes bridging for TODO/FIXME comments (Pro).</li>
+      <li>Interactive graph visualization via JCEF/D3.js (Pro).</li>
+      <li>Daily notes quick action (Pro).</li>
+      <li>Template engine with variable substitution (Pro).</li>
+      <li>Settings panel under Tools → Obsidian Bridge.</li>
+      <li>All vector SVG icons; no until-build cap for future compatibility.</li>
     </ul>
-  ]]></change-notes>
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Application-level settings service -->
+        <applicationService
+            serviceImplementation="dev.htmeta.obsidianbridge.ui.settings.ObsidianBridgeSettings"/>
+
+        <!-- Project-level services -->
+        <projectService
+            serviceImplementation="dev.htmeta.obsidianbridge.core.VaultManager"/>
+        <projectService
+            serviceImplementation="dev.htmeta.obsidianbridge.core.IndexService"/>
+        <projectService
+            serviceImplementation="dev.htmeta.obsidianbridge.search.VaultSearchService"/>
+        <projectService
+            serviceImplementation="dev.htmeta.obsidianbridge.bridge.BridgeService"/>
+
+        <!-- Tool windows -->
+        <toolWindow id="Backlinks" anchor="right" secondary="true"
+            factoryClass="dev.htmeta.obsidianbridge.ui.toolwindow.BacklinksToolWindowFactory"
+            icon="/icons/backlinks.svg"/>
+        <toolWindow id="Tags" anchor="left" secondary="true"
+            factoryClass="dev.htmeta.obsidianbridge.ui.toolwindow.TagTreeToolWindowFactory"
+            icon="/icons/tags.svg"/>
+        <toolWindow id="Graph" anchor="bottom"
+            factoryClass="dev.htmeta.obsidianbridge.ui.toolwindow.GraphToolWindowFactory"
+            icon="/icons/graph.svg"/>
+
+        <!-- Settings panel -->
+        <applicationConfigurable
+            instance="dev.htmeta.obsidianbridge.ui.settings.ObsidianBridgeConfigurable"
+            id="obsidian.bridge.settings" displayName="Obsidian Bridge" parentId="tools"/>
+
+        <!-- VFS listener for vault file watching -->
+        <vfs.asyncListener
+            implementation="dev.htmeta.obsidianbridge.core.VaultFileListener"/>
+    </extensions>
+
+    <!-- Actions -->
+    <actions>
+        <group id="ObsidianBridge.MainMenu" text="Obsidian Bridge" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="obsidian.bridge.search"
+                class="dev.htmeta.obsidianbridge.actions.SearchAction"
+                text="Search Vault" description="Search across all registered Obsidian vaults"
+                icon="/icons/search.svg">
+                <keyboard-shortcut first-keystroke="ctrl alt O" keymap="$default"/>
+                <keyboard-shortcut first-keystroke="meta alt O" keymap="Mac OS X 10.5+"/>
+            </action>
+            <action id="obsidian.bridge.dailyNote"
+                class="dev.htmeta.obsidianbridge.actions.DailyNoteAction"
+                text="Open Daily Note" description="Open or create today's daily note"
+                icon="/icons/daily.svg">
+                <keyboard-shortcut first-keystroke="ctrl alt D" keymap="$default"/>
+                <keyboard-shortcut first-keystroke="meta alt D" keymap="Mac OS X 10.5+"/>
+            </action>
+            <action id="obsidian.bridge.newNote"
+                class="dev.htmeta.obsidianbridge.actions.NewNoteAction"
+                text="New Note" description="Create a new Obsidian note from template"
+                icon="/icons/new-note.svg">
+                <keyboard-shortcut first-keystroke="ctrl alt N" keymap="$default"/>
+                <keyboard-shortcut first-keystroke="meta alt N" keymap="Mac OS X 10.5+"/>
+            </action>
+            <action id="obsidian.bridge.reindex"
+                class="dev.htmeta.obsidianbridge.actions.ReindexAction"
+                text="Re-index Vault" description="Force re-index all registered vaults"/>
+        </group>
+    </actions>
+
+    <!-- Extension points for third-party plugins -->
+    <extensionPoints>
+        <extensionPoint name="linkResolver"
+            interface="dev.htmeta.obsidianbridge.extensions.ObsidianLinkResolver"/>
+        <extensionPoint name="frontmatterProcessor"
+            interface="dev.htmeta.obsidianbridge.extensions.FrontmatterProcessor"/>
+        <extensionPoint name="bridgeMarkerProvider"
+            interface="dev.htmeta.obsidianbridge.extensions.BridgeMarkerProvider"/>
+    </extensionPoints>
 </idea-plugin>
