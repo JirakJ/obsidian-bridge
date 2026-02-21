@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.ui.Messages
 import com.jakubjirak.obsidianbridge.core.VaultManager
+import com.jakubjirak.obsidianbridge.license.Feature
+import com.jakubjirak.obsidianbridge.license.LicenseService
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDate
@@ -15,6 +17,13 @@ class NewNoteAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
+
+        val licenseService = LicenseService.getInstance()
+        if (!licenseService.isFeatureAvailable(Feature.TEMPLATES)) {
+            Messages.showInfoMessage(project, "Templates is a Pro feature. Upgrade to Pro to unlock.", "Obsidian Bridge — Pro Feature")
+            return
+        }
+
         val vaults = VaultManager.getInstance(project).getActiveVaults()
         if (vaults.isEmpty()) {
             Messages.showWarningDialog(project, "No vaults configured.", "Obsidian Bridge")

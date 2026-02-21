@@ -4,12 +4,20 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
+import com.jakubjirak.obsidianbridge.license.Feature
+import com.jakubjirak.obsidianbridge.license.LicenseService
+import com.jakubjirak.obsidianbridge.ui.ProFeaturePanel
 import javax.swing.*
 import java.awt.BorderLayout
 
 class GraphToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val panel = GraphPanel(project)
+        val licenseService = LicenseService.getInstance()
+        val panel = if (licenseService.isFeatureAvailable(Feature.GRAPH_VIEW)) {
+            GraphPanel(project)
+        } else {
+            ProFeaturePanel("Graph View")
+        }
         val content = ContentFactory.getInstance().createContent(panel, "", false)
         toolWindow.contentManager.addContent(content)
     }
