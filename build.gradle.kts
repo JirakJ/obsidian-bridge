@@ -44,7 +44,7 @@ intellijPlatform {
 
         vendor {
             name = "Jakub Jirák"
-            url = "https://github.com/jakubjirak"
+            url = "https://github.com/JirakJ"
         }
     }
 
