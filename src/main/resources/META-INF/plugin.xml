@@ -11,23 +11,18 @@
     view backlinks, parse YAML frontmatter, search vault metadata, and bridge TODO/FIXME comments
     with Obsidian notes — all without leaving the IDE.</p>
 
-    <h3>Free Features</h3>
+    <h3>Features</h3>
     <ul>
       <li>Wiki-link navigation and autocompletion</li>
-      <li>Basic backlinks panel</li>
-      <li>Single vault support</li>
+      <li>Backlinks panel</li>
+      <li>Single and multi-vault support</li>
       <li>Vault-wide full-text search</li>
       <li>Frontmatter parsing and display</li>
-    </ul>
-
-    <h3>Pro Features</h3>
-    <ul>
       <li>Interactive graph view (D3.js)</li>
       <li>Code ↔ Notes bridging (TODO/FIXME linking)</li>
       <li>Tag tree navigation</li>
       <li>Daily notes integration</li>
       <li>Templates with variable substitution</li>
-      <li>Multi-vault support</li>
     </ul>
 
     <p>Works with IntelliJ IDEA, WebStorm, PyCharm, CLion, GoLand, PhpStorm, Rider, RubyMine, and Android Studio.</p>
@@ -143,6 +138,9 @@
         <!-- Completion contributor -->
         <completion.contributor language="any"
             implementationClass="com.jakubjirak.obsidianbridge.editor.WikiLinkCompletionContributor"/>
+    
+        <notificationGroup id="Obsidian IDE Bridge Feedback" displayType="BALLOON"/>
+        <projectActivity implementation="com.jakubjirak.obsidianbridge.feedback.FeedbackNotifier"/>
     </extensions>
 
     <!-- Actions -->
