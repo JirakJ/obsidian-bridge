@@ -3,8 +3,6 @@
     <name>Obsidian IDE Bridge</name>
     <vendor email="support@jakubjirak.com" url="https://jakubjirak.com">Jakub Jirák</vendor>
 
-    <product-descriptor code="POBSIDIANIDEBRI" release-date="20260221" release-version="20262" optional="true"/>
-
     <description><![CDATA[
     <h2>Obsidian IDE Bridge for JetBrains</h2>
     <p>Integrate your Obsidian vault directly into JetBrains IDEs. Navigate <code>[[wiki-links]]</code>,
@@ -31,7 +29,7 @@
     <change-notes><![CDATA[
     <h3>What's New in 2026.2.4</h3>
     <ul>
-      <li><b>Marketplace Ready</b> — Added product descriptor (POBSIDIANIDEBRI), freemium pricing model, support contact.</li>
+      <li><b>Marketplace Ready</b> — Added support contact and plugin metadata.</li>
     </ul>
 
     <h3>What's New in 2026.2.3</h3>
@@ -42,8 +40,7 @@
     <h3>What's New in 2026.2.2</h3>
     <ul>
       <li><b>Comprehensive Tests</b> — Added 40+ unit tests covering license, search, indexing, models, and utilities.</li>
-      <li><b>Freemium Enforcement</b> — Pro features (Graph, Tags, Daily Notes, Templates, Bridge) now require Pro license.</li>
-      <li><b>Pro Feature Panels</b> — Locked features show clear upgrade messaging.</li>
+      <li><b>Feature Enhancements</b> — All features (Graph, Tags, Daily Notes, Templates, Bridge) available to all users.</li>
     </ul>
 
     <h3>What's New in 2026.2.1</h3>
@@ -52,7 +49,7 @@
       <li><b>Status Bar Widget</b> — See vault and note count at a glance.</li>
       <li><b>Wiki-Link Line Markers</b> — Gutter icons for wiki-link detection.</li>
       <li><b>Wiki-Link Completion</b> — Autocomplete note titles inside <code>[[...]]</code>.</li>
-      <li><b>License Service</b> — Freemium feature gating (Free / Pro / Team).</li>
+      <li><b>Feature Management</b> — All features available to all users.</li>
       <li><b>Index Persistence</b> — Cached note hashes for faster incremental re-indexing.</li>
       <li><b>Vault Diagnostics</b> — New action to inspect vault health and statistics.</li>
       <li><b>Notification Support</b> — Balloon notifications for indexing and warnings.</li>
@@ -62,17 +59,17 @@
 
     <h3>What's New in 2026.2.0</h3>
     <ul>
-      <li><b>Initial Release</b> — Production-ready freemium plugin.</li>
+      <li><b>Initial Release</b> — Production-ready plugin.</li>
       <li>Vault registration and validation with persistent settings.</li>
       <li>Fast incremental indexing via VFS file watchers.</li>
       <li>Wiki-link recognition, navigation, and autocompletion.</li>
       <li>Backlinks tool window with context preview.</li>
       <li>Tag tree panel with hierarchical navigation.</li>
       <li>Vault-wide full-text search with filter chips.</li>
-      <li>Code ↔ Notes bridging for TODO/FIXME comments (Pro).</li>
-      <li>Interactive graph visualization via JCEF/D3.js (Pro).</li>
-      <li>Daily notes quick action (Pro).</li>
-      <li>Template engine with variable substitution (Pro).</li>
+      <li>Code ↔ Notes bridging for TODO/FIXME comments.</li>
+      <li>Interactive graph visualization via JCEF/D3.js.</li>
+      <li>Daily notes quick action.</li>
+      <li>Template engine with variable substitution.</li>
       <li>Settings panel under Tools → Obsidian IDE Bridge.</li>
       <li>All vector SVG icons; no until-build cap for future compatibility.</li>
     </ul>
@@ -84,10 +81,6 @@
         <!-- Application-level settings service -->
         <applicationService
             serviceImplementation="com.jakubjirak.obsidianbridge.ui.settings.ObsidianBridgeSettings"/>
-
-        <!-- Application-level license service -->
-        <applicationService
-            serviceImplementation="com.jakubjirak.obsidianbridge.license.LicenseService"/>
 
         <!-- Project-level services -->
         <projectService
