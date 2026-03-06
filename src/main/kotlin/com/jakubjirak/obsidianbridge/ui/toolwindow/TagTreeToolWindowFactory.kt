@@ -4,9 +4,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
-import com.jakubjirak.obsidianbridge.license.Feature
-import com.jakubjirak.obsidianbridge.license.LicenseService
-import com.jakubjirak.obsidianbridge.ui.ProFeaturePanel
 import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
@@ -14,12 +11,7 @@ import java.awt.BorderLayout
 
 class TagTreeToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val licenseService = LicenseService.getInstance()
-        val panel = if (licenseService.isFeatureAvailable(Feature.TAG_TREE)) {
-            TagTreePanel(project)
-        } else {
-            ProFeaturePanel("Tag Tree")
-        }
+        val panel = TagTreePanel(project)
         val content = ContentFactory.getInstance().createContent(panel, "", false)
         toolWindow.contentManager.addContent(content)
     }
