@@ -26,6 +26,8 @@
     <p>Works with IntelliJ IDEA, WebStorm, PyCharm, CLion, GoLand, PhpStorm, Rider, RubyMine, and Android Studio.</p>
     ]]></description>
 
+    <product-descriptor code="POBSIDBRIDGE" release-date="20260307" release-version="20263" optional="true"/>
+
     <change-notes><![CDATA[
     <h3>What's New in 2026.2.4</h3>
     <ul>
@@ -78,6 +80,9 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <!-- Freemium licensing gate -->
+        <applicationService serviceImplementation="com.jakubjirak.obsidianbridge.licensing.FreemiumGate"/>
+
         <!-- Application-level settings service -->
         <applicationService
             serviceImplementation="com.jakubjirak.obsidianbridge.ui.settings.ObsidianBridgeSettings"/>
