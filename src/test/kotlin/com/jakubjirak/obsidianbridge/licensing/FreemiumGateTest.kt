@@ -22,7 +22,7 @@ class FreemiumGateTest {
 
     @Test
     fun `product code is correct`() {
-        assertEquals("POBSIDBRIDGE", PRODUCT_CODE)
+        assertEquals("POBSIDIANIDEBRI", PRODUCT_CODE)
     }
 
     @Test
