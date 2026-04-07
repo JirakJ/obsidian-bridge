@@ -108,4 +108,28 @@ class ModelTest {
         assertEquals(1, config.excludePatterns.size)
         assertEquals("private/**", config.excludePatterns[0])
     }
+
+    @Test
+    fun `VaultConfig no-arg constructor for XML serialization`() {
+        val config = VaultConfig()
+        assertEquals("", config.path)
+        assertEquals("", config.name)
+        assertTrue(config.id.isNotEmpty())
+        assertEquals("yyyy-MM-dd", config.dailyNoteFormat)
+        assertEquals("daily", config.dailyNoteFolder)
+        assertTrue(config.isActive)
+    }
+
+    @Test
+    fun `VaultConfig fields are mutable for serialization`() {
+        val config = VaultConfig()
+        config.path = "/my/vault"
+        config.name = "My Vault"
+        config.dailyNoteFolder = "journal"
+        config.isActive = false
+        assertEquals("/my/vault", config.path)
+        assertEquals("My Vault", config.name)
+        assertEquals("journal", config.dailyNoteFolder)
+        assertFalse(config.isActive)
+    }
 }

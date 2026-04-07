@@ -26,9 +26,17 @@
     <p>Works with IntelliJ IDEA, WebStorm, PyCharm, CLion, GoLand, PhpStorm, Rider, RubyMine, and Android Studio.</p>
     ]]></description>
 
-    <product-descriptor code="POBSIDIANIDEBRI" release-date="20260307" release-version="20263" optional="true"/>
+    <product-descriptor code="POBSIDIANIDEBRI" release-date="20260407" release-version="20264" optional="true"/>
 
     <change-notes><![CDATA[
+    <h3>What's New in 2026.4.1</h3>
+    <ul>
+      <li><b>Fixed: Vault settings persistence</b> — VaultConfig fields changed from immutable to mutable with no-arg constructor. Settings now survive IDE restart.</li>
+      <li><b>Fixed: Open Daily Note</b> — Action now opens the daily note file in the editor instead of showing an info dialog.</li>
+      <li><b>New: Interactive Graph View</b> — Replaced stub with Swing 2D circular-layout graph. Shows notes as nodes, wiki-links as edges. Click to open. Hover for labels. Configurable depth.</li>
+      <li><b>New: Serialization tests</b> — Added VaultConfig no-arg constructor and mutability tests.</li>
+    </ul>
+
     <h3>What's New in 2026.2.4</h3>
     <ul>
       <li><b>Marketplace Ready</b> — Added support contact and plugin metadata.</li>

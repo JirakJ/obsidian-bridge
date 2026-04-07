@@ -3,7 +3,9 @@ package com.jakubjirak.obsidianbridge.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.jakubjirak.obsidianbridge.core.VaultManager
 import java.nio.file.Files
 import java.nio.file.Path
@@ -34,8 +36,13 @@ class DailyNoteAction : AnAction() {
                 Files.writeString(notePath, "---\ndate: $dateStr\ntags:\n  - daily\n---\n\n# $dateStr\n\n")
                 log.info("Created daily note: $notePath")
             }
-            // File open handled by IDE VFS refresh
-            Messages.showInfoMessage(project, "Daily note: $notePath", "Obsidian IDE Bridge")
+            val vf = LocalFileSystem.getInstance().refreshAndFindFileByPath(notePath.toString())
+            if (vf != null) {
+                FileEditorManager.getInstance(project).openFile(vf, true)
+            } else {
+                log.warn("VFS could not locate daily note after creation: $notePath")
+                Messages.showErrorDialog(project, "File created but could not be opened: $notePath", "Obsidian IDE Bridge")
+            }
         }.onFailure { ex ->
             log.warn("Failed to create daily note: ${ex.message}")
             Messages.showErrorDialog(project, "Failed to create daily note: ${ex.message}", "Obsidian IDE Bridge")
