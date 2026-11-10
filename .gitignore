@@ -5,3 +5,7 @@
 *.iml
 .DS_Store
 .intellijPlatform/
+.env
+build/
+.idea/
+.kotlin/
