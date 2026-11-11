@@ -15,7 +15,7 @@ class SearchAction : AnAction() {
         if (results.isEmpty()) {
             Messages.showInfoMessage(project, "No results found for: $query", "Obsidian IDE Bridge")
         } else {
-            val message = results.joinToString("\n") { "• ${it.note.title} (${it.note.relativePath})" }
+            val message = results.joinToString("\n") { "• ${it.note.title} (${it.note.relativePath}) — ${it.matchSnippet}" }
             Messages.showInfoMessage(project, message, "Obsidian IDE Bridge — ${results.size} Results")
         }
     }

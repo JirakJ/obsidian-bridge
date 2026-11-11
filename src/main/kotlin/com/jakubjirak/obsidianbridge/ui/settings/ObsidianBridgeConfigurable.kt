@@ -1,101 +1,87 @@
 package com.jakubjirak.obsidianbridge.ui.settings
 
 import com.intellij.openapi.options.Configurable
-import javax.swing.*
+import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.project.ProjectManager
+import com.jakubjirak.obsidianbridge.core.IndexService
+import com.jakubjirak.obsidianbridge.core.VaultManager
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
+import javax.swing.JCheckBox
+import javax.swing.JComponent
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JTextField
 
+/** Settings → Tools → Obsidian IDE Bridge: primary vault path/name and gutter icons. */
 class ObsidianBridgeConfigurable : Configurable {
 
-    private var panel: JPanel? = null
-    private var vaultPathField: JTextField? = null
-    private var vaultNameField: JTextField? = null
-    private var graphDepthSpinner: JSpinner? = null
-    private var showGutterCheckbox: JCheckBox? = null
-    private var modified = false
+    private val vaultPathField = JTextField()
+    private val vaultNameField = JTextField()
+    private val showGutterCheckbox = JCheckBox("Show gutter icons for [[wiki-links]] in code comments")
 
     override fun getDisplayName(): String = "Obsidian IDE Bridge"
 
     override fun createComponent(): JComponent {
-        val mainPanel = JPanel(BorderLayout())
         val formPanel = JPanel(GridBagLayout())
         val gbc = GridBagConstraints().apply {
             fill = GridBagConstraints.HORIZONTAL
-            insets = Insets(4, 4, 4, 4)
-            weightx = 1.0
+            insets = Insets(INSET, INSET, INSET, INSET)
         }
-
-        val settings = ObsidianBridgeSettings.getInstance().state
-
-        // Vault path
-        gbc.gridy = 0; gbc.gridx = 0; gbc.weightx = 0.0
-        formPanel.add(JLabel("Vault Path:"), gbc)
-        gbc.gridx = 1; gbc.weightx = 1.0
-        vaultPathField = JTextField(settings.vaults.firstOrNull()?.path ?: "").also {
-            it.addActionListener { modified = true }
-            formPanel.add(it, gbc)
+        fun row(y: Int, label: String, field: JComponent) {
+            gbc.gridy = y; gbc.gridx = 0; gbc.weightx = 0.0; gbc.gridwidth = 1
+            formPanel.add(JLabel(label), gbc)
+            gbc.gridx = 1; gbc.weightx = 1.0
+            formPanel.add(field, gbc)
         }
-
-        // Vault name
-        gbc.gridy = 1; gbc.gridx = 0; gbc.weightx = 0.0
-        formPanel.add(JLabel("Vault Name:"), gbc)
-        gbc.gridx = 1; gbc.weightx = 1.0
-        vaultNameField = JTextField(settings.vaults.firstOrNull()?.name ?: "My Vault").also {
-            formPanel.add(it, gbc)
-        }
-
-        // Graph depth
-        gbc.gridy = 2; gbc.gridx = 0; gbc.weightx = 0.0
-        formPanel.add(JLabel("Graph Depth:"), gbc)
-        gbc.gridx = 1; gbc.weightx = 1.0
-        graphDepthSpinner = JSpinner(SpinnerNumberModel(settings.graphDepth, 1, 10, 1)).also {
-            formPanel.add(it, gbc)
-        }
-
-        // Show gutter icons
-        gbc.gridy = 3; gbc.gridx = 0; gbc.gridwidth = 2; gbc.weightx = 1.0
-        showGutterCheckbox = JCheckBox("Show gutter icons", settings.showGutterIcons).also {
-            formPanel.add(it, gbc)
-        }
-
-        mainPanel.add(formPanel, BorderLayout.NORTH)
-        panel = mainPanel
-        return mainPanel
+        row(0, "Vault path:", vaultPathField)
+        row(1, "Vault name:", vaultNameField)
+        gbc.gridy = 2; gbc.gridx = 0; gbc.gridwidth = 2; gbc.weightx = 1.0
+        formPanel.add(showGutterCheckbox, gbc)
+        reset()
+        return JPanel(BorderLayout()).apply { add(formPanel, BorderLayout.NORTH) }
     }
 
-    override fun isModified(): Boolean = true // simplified — always check on apply
+    override fun isModified(): Boolean {
+        val state = ObsidianBridgeSettings.getInstance().state
+        val primary = state.vaults.firstOrNull()
+        return vaultPathField.text.trim() != (primary?.path ?: "") ||
+            vaultNameField.text.trim() != (primary?.name ?: "") ||
+            showGutterCheckbox.isSelected != state.showGutterIcons
+    }
 
     override fun apply() {
-        val settings = ObsidianBridgeSettings.getInstance()
-        val vaultPath = vaultPathField?.text ?: return
-        val vaultName = vaultNameField?.text ?: "My Vault"
-        val graphDepth = (graphDepthSpinner?.value as? Int) ?: 2
-        val showGutter = showGutterCheckbox?.isSelected ?: true
-
-        val existingVaults = settings.state.vaults.toMutableList()
-        if (existingVaults.isEmpty() && vaultPath.isNotBlank()) {
-            existingVaults.add(com.jakubjirak.obsidianbridge.core.model.VaultConfig(
-                path = vaultPath,
-                name = vaultName
-            ))
-        } else if (existingVaults.isNotEmpty()) {
-            existingVaults[0] = existingVaults[0].copy(path = vaultPath, name = vaultName)
+        val path = vaultPathField.text.trim()
+        if (path.isNotEmpty() && !VaultManager.isValidVault(path)) {
+            throw ConfigurationException("'$path' is not an Obsidian vault (no .obsidian folder found).")
         }
-
-        settings.loadState(SettingsState(
-            vaults = existingVaults,
-            graphDepth = graphDepth,
-            showGutterIcons = showGutter
-        ))
+        val settings = ObsidianBridgeSettings.getInstance()
+        settings.loadState(
+            ObsidianBridgeSettings.withPrimaryVault(settings.state, path, vaultNameField.text, showGutterCheckbox.isSelected)
+        )
+        reindexOpenProjects()
     }
 
     override fun reset() {
-        val settings = ObsidianBridgeSettings.getInstance().state
-        vaultPathField?.text = settings.vaults.firstOrNull()?.path ?: ""
-        vaultNameField?.text = settings.vaults.firstOrNull()?.name ?: "My Vault"
-        graphDepthSpinner?.value = settings.graphDepth
-        showGutterCheckbox?.isSelected = settings.showGutterIcons
+        val state = ObsidianBridgeSettings.getInstance().state
+        vaultPathField.text = state.vaults.firstOrNull()?.path ?: ""
+        vaultNameField.text = state.vaults.firstOrNull()?.name ?: ""
+        showGutterCheckbox.isSelected = state.showGutterIcons
+    }
+
+    private fun reindexOpenProjects() {
+        for (project in ProjectManager.getInstance().openProjects) {
+            val index = IndexService.getInstance(project)
+            com.intellij.openapi.application.ApplicationManager.getApplication().executeOnPooledThread {
+                index.clear()
+                VaultManager.getInstance(project).getActiveVaults().forEach { index.indexVault(it) }
+            }
+        }
+    }
+
+    private companion object {
+        const val INSET = 4
     }
 }

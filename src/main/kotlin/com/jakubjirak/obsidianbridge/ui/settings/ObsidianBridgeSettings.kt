@@ -9,10 +9,7 @@ import com.jakubjirak.obsidianbridge.core.model.VaultConfig
 
 data class SettingsState(
     var vaults: List<VaultConfig> = emptyList(),
-    var graphDepth: Int = 2,
-    var unresolvedLinkColor: String = "#FF6B6B",
     var showGutterIcons: Boolean = true,
-    var bridgeMarkerPatterns: String = "TODO|FIXME|HACK|NOTE"
 ) {
     // No-arg constructor for serialization
     constructor() : this(vaults = emptyList())
@@ -33,5 +30,21 @@ class ObsidianBridgeSettings : PersistentStateComponent<SettingsState> {
     companion object {
         fun getInstance(): ObsidianBridgeSettings =
             ApplicationManager.getApplication().getService(ObsidianBridgeSettings::class.java)
+
+        /**
+         * Settings after editing the primary (first) vault in the settings page. A blank path
+         * removes it; other vaults (edited in `obsidian-bridge.xml`) are kept unchanged.
+         */
+        fun withPrimaryVault(state: SettingsState, path: String, name: String, showGutterIcons: Boolean): SettingsState {
+            val vaults = state.vaults.toMutableList()
+            val trimmedPath = path.trim()
+            val displayName = name.trim().ifEmpty { trimmedPath.trimEnd('/', '\\').substringAfterLast('/').substringAfterLast('\\') }
+            when {
+                trimmedPath.isEmpty() -> if (vaults.isNotEmpty()) vaults.removeAt(0)
+                vaults.isEmpty() -> vaults += VaultConfig(path = trimmedPath, name = displayName)
+                else -> vaults[0] = vaults[0].copy(path = trimmedPath, name = displayName)
+            }
+            return state.copy(vaults = vaults, showGutterIcons = showGutterIcons)
+        }
     }
 }

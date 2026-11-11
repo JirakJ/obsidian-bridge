@@ -3,7 +3,9 @@ package com.jakubjirak.obsidianbridge.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.jakubjirak.obsidianbridge.core.VaultManager
 import java.nio.file.Files
 import java.nio.file.Path
@@ -26,7 +28,11 @@ class NewNoteAction : AnAction() {
         if (title.isNullOrBlank()) return
 
         val vault = vaults.first()
-        val filename = title.replace(Regex("[^a-zA-Z0-9_ -]"), "").replace(" ", "-").lowercase()
+        val filename = noteFileName(title)
+        if (filename.isEmpty()) {
+            Messages.showWarningDialog(project, "The title must contain at least one letter or digit.", "Obsidian IDE Bridge")
+            return
+        }
         val notePath = Path.of(vault.path, "$filename.md")
 
         runCatching {
@@ -37,10 +43,15 @@ class NewNoteAction : AnAction() {
             val dateStr = LocalDate.now().toString()
             Files.writeString(notePath, "---\ntitle: $title\ndate: $dateStr\ntags: []\n---\n\n# $title\n\n")
             log.info("Created note: $notePath")
-            Messages.showInfoMessage(project, "Note created: $notePath", "Obsidian IDE Bridge")
+            LocalFileSystem.getInstance().refreshAndFindFileByNioFile(notePath)
+                ?.let { FileEditorManager.getInstance(project).openFile(it, true) }
         }.onFailure { ex ->
             log.warn("Failed to create note: ${ex.message}")
             Messages.showErrorDialog(project, "Failed to create note: ${ex.message}", "Obsidian IDE Bridge")
         }
     }
 }
+
+/** File name (without `.md`) for a note titled [title]: letters/digits (any script), `_`, `-`; spaces become `-`. */
+fun noteFileName(title: String): String =
+    title.trim().replace(Regex("[^\\p{L}\\p{N}_ -]"), "").trim().replace(Regex("\\s+"), "-").lowercase()

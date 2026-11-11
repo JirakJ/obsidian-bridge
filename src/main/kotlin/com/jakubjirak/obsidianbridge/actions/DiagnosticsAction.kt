@@ -28,7 +28,10 @@ class DiagnosticsAction : AnAction() {
         sb.appendLine("Total Notes: ${notes.size}")
         sb.appendLine("Unique Tags: $totalTags")
         sb.appendLine("Total Wiki-Links: $totalLinks")
-        sb.appendLine("Plugin Version: 2026.2.4")
+        val version = com.intellij.ide.plugins.PluginManagerCore
+            .getPlugin(com.intellij.openapi.extensions.PluginId.getId("com.jakubjirak.obsidianbridge"))?.version ?: "unknown"
+        sb.appendLine("Resolved Links: ${indexService.edges().size}")
+        sb.appendLine("Plugin Version: $version")
 
         Messages.showInfoMessage(project, sb.toString(), "Obsidian IDE Bridge — Diagnostics")
     }

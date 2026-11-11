@@ -13,7 +13,9 @@ data class VaultNote(
     val outgoingLinks: List<WikiLink> = emptyList(),
     val created: Instant = Instant.now(),
     val modified: Instant = Instant.now(),
-    val contentHash: String = ""
+    val contentHash: String = "",
+    /** Note text without frontmatter, kept in memory for full-text search. */
+    val body: String = ""
 ) {
     val directory: String get() = relativePath.substringBeforeLast('/', "")
 }

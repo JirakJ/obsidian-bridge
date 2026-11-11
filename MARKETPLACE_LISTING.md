@@ -1,7 +1,7 @@
 Obsidian Bridge — Marketplace Listing
 
 Short description:
-Obsidian Bridge integrates local Obsidian vaults into JetBrains IDEs: fast indexing, wiki-link navigation, backlinks and graph preview.
+Obsidian Bridge integrates local Obsidian vaults into JetBrains IDEs: note indexing, wiki-link completion and navigation from code comments, backlinks, tags, a link graph and full-text search.
 
 What's New in 2026.8.0
 - The plugin is now completely free — all features unlocked, no license needed.
