@@ -59,4 +59,31 @@ class FrontmatterParserTest {
         val fm = FrontmatterParser.parse(content)
         assertTrue(fm.isEmpty())
     }
+
+    @Test
+    fun `parses flow lists and quoted values`() {
+        val fm = FrontmatterParser.parse("---\ntitle: \"Quoted: title\"\naliases: [One, 'Two']\ntags: [a, \"#b\"]\n---\nbody")
+        assertEquals("Quoted: title", fm["title"])
+        assertEquals(listOf("One", "Two"), fm["aliases"])
+        assertEquals(listOf("a", "b"), fm["tags"])
+    }
+
+    @Test
+    fun `string tags split on commas and spaces`() {
+        assertEquals(listOf("a", "b", "c"), FrontmatterParser.parse("---\ntags: a, #b c\n---\n")["tags"])
+    }
+
+    @Test
+    fun `windows line endings are supported`() {
+        val fm = FrontmatterParser.parse("---\r\ntitle: Win\r\ntags:\r\n  - x\r\n---\r\nbody")
+        assertEquals("Win", fm["title"])
+        assertEquals(listOf("x"), fm["tags"])
+    }
+
+    @Test
+    fun `body strips the frontmatter block`() {
+        assertEquals("# Heading\ntext", FrontmatterParser.body("---\ntitle: x\n---\n# Heading\ntext"))
+        assertEquals("no frontmatter", FrontmatterParser.body("no frontmatter"))
+        assertEquals("---\nunclosed", FrontmatterParser.body("---\nunclosed"))
+    }
 }

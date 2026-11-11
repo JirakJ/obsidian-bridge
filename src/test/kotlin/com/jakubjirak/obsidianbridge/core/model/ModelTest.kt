@@ -47,40 +47,6 @@ class ModelTest {
     }
 
     @Test
-    fun `BridgeEntry has UUID id`() {
-        val entry = BridgeEntry(codeFile = "Main.kt", lineNumber = 10, markerType = "TODO", text = "Fix this")
-        assertNotNull(entry.id)
-        assertTrue(entry.id.isNotEmpty())
-    }
-
-    @Test
-    fun `BridgeEntry stores linked note id`() {
-        val entry = BridgeEntry(codeFile = "Main.kt", lineNumber = 1, markerType = "FIXME", text = "Bug", linkedNoteId = "note-123")
-        assertEquals("note-123", entry.linkedNoteId)
-    }
-
-    @Test
-    fun `BridgeEntry default linked note is null`() {
-        val entry = BridgeEntry(codeFile = "Main.kt", lineNumber = 1, markerType = "TODO", text = "Task")
-        assertNull(entry.linkedNoteId)
-    }
-
-    @Test
-    fun `TagEntry stores note ids`() {
-        val entry = TagEntry(tag = "project", source = TagSource.INLINE)
-        entry.noteIds.add("note-1")
-        entry.noteIds.add("note-2")
-        assertEquals(2, entry.noteIds.size)
-    }
-
-    @Test
-    fun `TagSource enum values`() {
-        assertEquals(2, TagSource.entries.size)
-        assertTrue(TagSource.entries.contains(TagSource.FRONTMATTER))
-        assertTrue(TagSource.entries.contains(TagSource.INLINE))
-    }
-
-    @Test
     fun `LinkResolution sealed class variants`() {
         val note = VaultNote(id = "1", vaultId = "v1", relativePath = "note.md", title = "Test")
         val resolved = LinkResolution.Resolved(note)
@@ -99,7 +65,6 @@ class ModelTest {
         assertEquals("yyyy-MM-dd", config.dailyNoteFormat)
         assertEquals("daily", config.dailyNoteFolder)
         assertTrue(config.isActive)
-        assertNull(config.templateFolder)
     }
 
     @Test

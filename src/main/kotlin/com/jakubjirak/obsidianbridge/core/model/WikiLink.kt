@@ -8,6 +8,5 @@ data class WikiLink(
     val blockRef: String? = null,
     val isEmbed: Boolean = false,
     val sourceNoteId: String = "",
-    val sourceLineNumber: Int = 0,
-    val resolvedNoteId: String? = null
+    val sourceLineNumber: Int = 0
 )

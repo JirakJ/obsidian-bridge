@@ -5,22 +5,19 @@
 
     <description><![CDATA[
     <h2>Obsidian IDE Bridge for JetBrains</h2>
-    <p>Integrate your Obsidian vault directly into JetBrains IDEs. Navigate <code>[[wiki-links]]</code>,
-    view backlinks, parse YAML frontmatter, search vault metadata, and bridge TODO/FIXME comments
-    with Obsidian notes — all without leaving the IDE.</p>
+    <p>Work with your Obsidian vault from JetBrains IDEs: complete and follow <code>[[wiki-links]]</code>,
+    see backlinks, browse tags and the link graph, and search your notes — without leaving the IDE.</p>
 
     <h3>Features</h3>
     <ul>
-      <li>Wiki-link navigation and autocompletion</li>
-      <li>Backlinks panel</li>
-      <li>Single and multi-vault support</li>
-      <li>Vault-wide full-text search</li>
-      <li>Frontmatter parsing and display</li>
-      <li>Interactive graph view (D3.js)</li>
-      <li>Code ↔ Notes bridging (TODO/FIXME linking)</li>
-      <li>Tag tree navigation</li>
-      <li>Daily notes integration</li>
-      <li>Templates with variable substitution</li>
+      <li><code>[[wiki-link]]</code> autocompletion of note titles, and gutter icons on code comments that open the linked note</li>
+      <li>Backlinks tool window for the note open in the editor</li>
+      <li>Tags tool window with nested tags (<code>project/alpha</code>) and note counts</li>
+      <li>Graph tool window of notes and resolved links (click a node to open it)</li>
+      <li>Full-text search across note titles, aliases, tags and content</li>
+      <li>Frontmatter parsing (title, aliases, tags)</li>
+      <li>Daily note and new note actions, re-index and diagnostics</li>
+      <li>Index kept up to date as vault files change</li>
     </ul>
 
     <p>Works with IntelliJ IDEA, WebStorm, PyCharm, CLion, GoLand, PhpStorm, Rider, RubyMine, and Android Studio.</p>
@@ -101,10 +98,6 @@
             serviceImplementation="com.jakubjirak.obsidianbridge.core.IndexService"/>
         <projectService
             serviceImplementation="com.jakubjirak.obsidianbridge.search.VaultSearchService"/>
-        <projectService
-            serviceImplementation="com.jakubjirak.obsidianbridge.bridge.BridgeService"/>
-        <projectService
-            serviceImplementation="com.jakubjirak.obsidianbridge.core.IndexPersistence"/>
 
         <!-- Tool windows -->
         <toolWindow id="Backlinks" anchor="right" secondary="true"
@@ -130,7 +123,7 @@
         <notificationGroup id="Obsidian IDE Bridge" displayType="BALLOON"/>
 
         <!-- Startup activity -->
-        <postStartupActivity implementation="com.jakubjirak.obsidianbridge.startup.ObsidianBridgeStartupActivity"/>
+        <projectActivity implementation="com.jakubjirak.obsidianbridge.startup.ObsidianBridgeStartupActivity"/>
 
         <!-- Status bar widget -->
         <statusBarWidgetFactory id="ObsidianBridge.StatusBar"
@@ -168,7 +161,7 @@
             </action>
             <action id="obsidian.bridge.newNote"
                 class="com.jakubjirak.obsidianbridge.actions.NewNoteAction"
-                text="New Note" description="Create a new Obsidian note from template"
+                text="New Note" description="Create a new note in the vault and open it"
                 icon="/icons/new-note.svg">
                 <keyboard-shortcut first-keystroke="ctrl alt N" keymap="$default"/>
                 <keyboard-shortcut first-keystroke="meta alt N" keymap="Mac OS X 10.5+"/>
@@ -182,13 +175,4 @@
         </group>
     </actions>
 
-    <!-- Extension points for third-party plugins -->
-    <extensionPoints>
-        <extensionPoint name="linkResolver"
-            interface="com.jakubjirak.obsidianbridge.extensions.ObsidianLinkResolver"/>
-        <extensionPoint name="frontmatterProcessor"
-            interface="com.jakubjirak.obsidianbridge.extensions.FrontmatterProcessor"/>
-        <extensionPoint name="bridgeMarkerProvider"
-            interface="com.jakubjirak.obsidianbridge.extensions.BridgeMarkerProvider"/>
-    </extensionPoints>
 </idea-plugin>

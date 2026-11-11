@@ -21,7 +21,9 @@ class DailyNoteAction : AnAction() {
 
         val vaults = VaultManager.getInstance(project).getActiveVaults()
         if (vaults.isEmpty()) {
-            Messages.showWarningDialog(project, "No vaults configured. Go to Settings → Tools → Obsidian IDE Bridge.", "Obsidian IDE Bridge")
+            Messages.showWarningDialog(
+                project, "No vaults configured. Go to Settings → Tools → Obsidian IDE Bridge.", "Obsidian IDE Bridge"
+            )
             return
         }
 
