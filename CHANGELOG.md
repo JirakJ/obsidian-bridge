@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2026.9.0] - 2026-11-11
+
 ### Fixed
 
 - **Backlinks, Tags and Graph tool windows were never populated**: links are now resolved (by path, name or alias), the Backlinks window follows the note open in the editor, the Tags window shows nested tags with counts and the Graph draws edges.

@@ -1,6 +1,6 @@
 # Obsidian Bridge for JetBrains
 
-[![Version](https://img.shields.io/badge/version-2026.8.0-blue)](https://plugins.jetbrains.com/plugin/30304)
+[![Version](https://img.shields.io/badge/version-2026.9.0-blue)](https://plugins.jetbrains.com/plugin/30304)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
 Work with an Obsidian vault from JetBrains IDEs.
