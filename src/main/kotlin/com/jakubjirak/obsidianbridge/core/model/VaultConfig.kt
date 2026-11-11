@@ -10,7 +10,6 @@ data class VaultConfig(
     var path: String = "",
     var name: String = "",
     var excludePatterns: List<String> = listOf(".obsidian/**", ".trash/**"),
-    var templateFolder: String? = null,
     var dailyNoteFolder: String? = "daily",
     var dailyNoteFormat: String = "yyyy-MM-dd",
     var isActive: Boolean = true

@@ -1,71 +1,89 @@
 package com.jakubjirak.obsidianbridge.parser
 
-import com.intellij.openapi.diagnostic.Logger
-
+/**
+ * Minimal YAML frontmatter reader covering what Obsidian writes: `key: value`,
+ * block lists (`key:` followed by `- item` lines), flow lists (`key: [a, b]`) and
+ * quoted scalars. Nested mappings are ignored. `tags` are normalised to a list
+ * without leading `#`.
+ */
 object FrontmatterParser {
 
-    private val log = Logger.getInstance(FrontmatterParser::class.java)
+    private val LIST_ITEM = Regex("""^\s*-\s+(.+)""")
+    private const val QUOTES = "\"'"
 
+    /** Parsed frontmatter, or an empty map when the content has none. */
     fun parse(content: String): Map<String, Any> {
-        if (!content.startsWith("---")) return emptyMap()
+        val block = frontmatterBlock(content) ?: return emptyMap()
+        return parseSimpleYaml(block)
+    }
 
-        val endIndex = content.indexOf("\n---", 3)
-        if (endIndex < 0 || endIndex < 4) return emptyMap()
+    /** The text after the frontmatter block (or the whole content when there is none). */
+    fun body(content: String): String {
+        val normalized = content.replace("\r\n", "\n")
+        if (!normalized.startsWith("---\n")) return content
+        val end = normalized.indexOf("\n---", 3)
+        if (end < 0) return content
+        return normalized.substring(end + 4).removePrefix("\n")
+    }
 
-        val yamlBlock = content.substring(4, endIndex).trim()
-        if (yamlBlock.isEmpty()) return emptyMap()
-
-        return runCatching {
-            parseSimpleYaml(yamlBlock)
-        }.getOrElse { e ->
-            log.warn("Failed to parse frontmatter: ${e.message}")
-            emptyMap()
-        }
+    private fun frontmatterBlock(content: String): String? {
+        val normalized = content.replace("\r\n", "\n")
+        if (!normalized.startsWith("---\n")) return null
+        val end = normalized.indexOf("\n---", 3)
+        if (end < 4) return null
+        return normalized.substring(4, end).trim().takeIf { it.isNotEmpty() }
     }
 
     private fun parseSimpleYaml(yaml: String): Map<String, Any> {
-        val result = mutableMapOf<String, Any>()
-        var currentKey: String? = null
+        val result = linkedMapOf<String, Any>()
+        var listKey: String? = null
         val currentList = mutableListOf<String>()
 
+        fun flushList() {
+            val key = listKey ?: return
+            if (currentList.isNotEmpty()) result[key] = currentList.toList()
+            currentList.clear()
+            listKey = null
+        }
+
         for (line in yaml.lines()) {
+            val item = LIST_ITEM.find(line)
             when {
-                line.matches(Regex("""^\s*-\s+(.+)""")) && currentKey != null -> {
-                    val value = line.trim().removePrefix("- ").trim()
-                    currentList.add(value)
-                }
-                line.contains(":") && !line.startsWith(" ") && !line.startsWith("\t") -> {
-                    if (currentKey != null && currentList.isNotEmpty()) {
-                        result[currentKey] = currentList.toList()
-                        currentList.clear()
+                item != null && listKey != null -> currentList += unquote(item.groupValues[1].trim())
+                line.contains(':') && !line.startsWith(" ") && !line.startsWith("\t") -> {
+                    flushList()
+                    val key = line.substringBefore(':').trim()
+                    val value = line.substringAfter(':').trim()
+                    when {
+                        value.isEmpty() -> listKey = key
+                        value.startsWith("[") && value.endsWith("]") -> result[key] = flowList(value)
+                        else -> result[key] = unquote(value)
                     }
-                    val parts = line.split(":", limit = 2)
-                    currentKey = parts[0].trim()
-                    val value = parts[1].trim()
-                    if (value.isNotEmpty()) {
-                        result[currentKey!!] = value
-                        currentKey = null
-                    }
-                }
-                else -> {
-                    // continuation or empty
                 }
             }
         }
-        if (currentKey != null && currentList.isNotEmpty()) {
-            result[currentKey] = currentList.toList()
-        }
-
-        // Normalize tags field
-        val tagsRaw = result["tags"]
-        if (tagsRaw is String) {
-            result["tags"] = tagsRaw.split(",").map { it.trim().removePrefix("#") }.filter { it.isNotEmpty() }
-        }
-        if (tagsRaw is List<*>) {
-            @Suppress("UNCHECKED_CAST")
-            result["tags"] = (tagsRaw as List<String>).map { it.removePrefix("#").trim() }
-        }
-
+        flushList()
+        normalizeTags(result)
         return result
     }
+
+    private fun normalizeTags(result: MutableMap<String, Any>) {
+        when (val tags = result["tags"]) {
+            is String -> result["tags"] = tags.split(',', ' ').map { it.trim().removePrefix("#") }.filter { it.isNotEmpty() }
+            is List<*> -> result["tags"] = tags.map { it.toString().trim().removePrefix("#") }.filter { it.isNotEmpty() }
+        }
+    }
+
+    private fun flowList(value: String): List<String> =
+        value.removePrefix("[").removeSuffix("]")
+            .split(',')
+            .map { unquote(it.trim()) }
+            .filter { it.isNotEmpty() }
+
+    private fun unquote(value: String): String =
+        if (value.length >= 2 && value.first() in QUOTES && value.last() == value.first()) {
+            value.substring(1, value.length - 1)
+        } else {
+            value
+        }
 }
