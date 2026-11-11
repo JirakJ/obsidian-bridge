@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.intellij.platform)
+    alias(libs.plugins.detekt)
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -30,6 +31,7 @@ dependencies {
 
     testImplementation(libs.junit.api)
     testRuntimeOnly(libs.junit.engine)
+    testRuntimeOnly("junit:junit:4.13.2")
 }
 
 // Exclude IDE-provided libraries from plugin distribution
@@ -52,7 +54,7 @@ intellijPlatform {
 
         vendor {
             name = "Jakub Jirák"
-            url = "https://github.com/JirakJ"
+            url = "https://github.com/JirakJ/obsidian-bridge"
         }
     }
 
@@ -78,4 +80,9 @@ tasks {
     wrapper {
         gradleVersion = "8.12"
     }
+}
+
+detekt {
+    config.setFrom(files("detekt.yml"))
+    buildUponDefaultConfig = true
 }
